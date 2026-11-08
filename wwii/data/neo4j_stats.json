@@ -1,0 +1,53 @@
+{
+  "nodes": 2750,
+  "edges": 6640,
+  "node_types": {
+    "WartimeEvent": 8,
+    "WartimePolitician": 2647,
+    "WartimeGovernment": 7,
+    "WartimeParty": 88
+  },
+  "edge_types": {
+    "JOINT_DECLARATION": 1,
+    "REPRESENTED": 8,
+    "ATTENDED": 21,
+    "SIGNED": 8,
+    "DEMANDS_SURRENDER": 3,
+    "DIRECTED_AID_TO": 2,
+    "DECLARED_WAR_ON": 3,
+    "NON_AGGRESSION_PACT": 2,
+    "INVADED": 1,
+    "MILITARY_PACT": 3,
+    "JOINS_PARTY_AFTER_SWITCH": 1,
+    "LEAVES_PARTY": 1,
+    "ELECTORAL_RIVAL": 3431,
+    "NOMINATES_CANDIDATE": 3153,
+    "CALLED_FOR_RESISTANCE_AGAINST": 1,
+    "EXPRESSED_SUPPORT_FOR": 1
+  },
+  "methods": {
+    "nlp": 10,
+    "manual": 46,
+    "table": 6584
+  },
+  "signs": {
+    "1": 3163,
+    "neutral": 37,
+    "-1": 3440
+  },
+  "categories": {
+    "support": 3162,
+    "context": 37,
+    "opposition": 3439,
+    "switch": 2
+  },
+  "signed_types": 13,
+  "components": 14,
+  "largest_components": [
+    1966,
+    551,
+    179,
+    37,
+    6
+  ]
+}

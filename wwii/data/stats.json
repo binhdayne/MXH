@@ -1,0 +1,32 @@
+{
+  "nodes": 2722,
+  "edges": 6594,
+  "node_types": {
+    "WartimePolitician": 2629,
+    "WartimeParty": 88,
+    "WartimeGovernment": 5
+  },
+  "edge_types": {
+    "NOMINATES_CANDIDATE": 3153,
+    "ELECTORAL_RIVAL": 3431,
+    "JOINT_DECLARATION": 1,
+    "DEMANDS_SURRENDER": 3,
+    "LEAVES_PARTY": 1,
+    "JOINS_PARTY_AFTER_SWITCH": 1,
+    "DIRECTED_AID_TO": 2,
+    "CALLED_FOR_RESISTANCE_AGAINST": 1,
+    "EXPRESSED_SUPPORT_FOR": 1
+  },
+  "contests": {
+    "US-1940": 381,
+    "US-1942": 331,
+    "US-1944": 361,
+    "UK-1945": 57,
+    "AU-1943": 74,
+    "AU-1940": 74
+  },
+  "signs": {
+    "1": 3158,
+    "-1": 3436
+  }
+}
