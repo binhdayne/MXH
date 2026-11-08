@@ -1,0 +1,95 @@
+{
+  "nodes": 3326,
+  "edges": 10380,
+  "constituencies_seen": 650,
+  "node_types": {
+    "Person": 3303,
+    "Party": 19,
+    "Government": 4
+  },
+  "edge_types": {
+    "NOMINATES_CANDIDATE": 3302,
+    "ELECTORAL_RIVAL": 7070,
+    "SUBMITS_NO_CONFIDENCE": 1,
+    "LEAVES_PARTY": 1,
+    "JOINS_PARTY_AFTER_SWITCH": 1,
+    "PLEDGES_MILITARY_AID": 1,
+    "IMPOSES_SANCTIONS": 1,
+    "CONFIDENCE_SUPPORT": 1,
+    "COALITION_WITH": 1,
+    "LEADERSHIP_RIVAL": 1
+  },
+  "signs": {
+    "1": 3306,
+    "-1": 7074
+  },
+  "methods": {
+    "table": 10372,
+    "nlp": 8
+  },
+  "groups": {
+    "support": 3305,
+    "opposition": 7073,
+    "switch": 2
+  },
+  "exclusions": {
+    "spanning cell": 95
+  },
+  "wcc_sizes": [
+    3196,
+    127,
+    3
+  ],
+  "top_degree": [
+    {
+      "name": "Labour Party",
+      "positive": 616,
+      "negative": 0
+    },
+    {
+      "name": "Conservative Party",
+      "positive": 615,
+      "negative": 1
+    },
+    {
+      "name": "Liberal Democrats",
+      "positive": 614,
+      "negative": 0
+    },
+    {
+      "name": "Reform UK",
+      "positive": 588,
+      "negative": 0
+    },
+    {
+      "name": "Green Party of England and Wales",
+      "positive": 561,
+      "negative": 0
+    },
+    {
+      "name": "Scottish National Party",
+      "positive": 55,
+      "negative": 0
+    },
+    {
+      "name": "Scottish Green Party",
+      "positive": 42,
+      "negative": 0
+    },
+    {
+      "name": "Social Democratic Party (UK, 1990)",
+      "positive": 29,
+      "negative": 0
+    },
+    {
+      "name": "Yorkshire Party",
+      "positive": 27,
+      "negative": 0
+    },
+    {
+      "name": "Plaid Cymru",
+      "positive": 24,
+      "negative": 0
+    }
+  ]
+}
