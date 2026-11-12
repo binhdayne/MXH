@@ -1,19 +1,14 @@
 """Audit a stratified sample against the original Wikipedia HTML."""
 import argparse
-import csv
 import json
 import math
 import re
 from collections import Counter
 from pathlib import Path
-from urllib.parse import urlsplit
 
 from lxml import html
 
-
-def read_rows(path):
-    with path.open(encoding="utf8", newline="") as file:
-        return list(csv.DictReader(file))
+from graph_io import read_rows, write_json, write_rows
 
 
 def text(element):
@@ -104,11 +99,8 @@ def main():
             row["review"] = "evidence_located" if ok else "review_required"
     for tally in counts.values():
         tally["wilson_lower_95"] = wilson_lower(tally["matched"], tally["sample"])
-    with (args.data/"audit_checked.csv").open("w", encoding="utf8", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=list(rows[0]))
-        writer.writeheader()
-        writer.writerows(rows)
-    (args.data/"audit_stats.json").write_text(json.dumps(counts, indent=2)+"\n", encoding="utf8")
+    write_rows(args.data / "audit_checked.csv", rows)
+    write_json(args.data / "audit_stats.json", counts)
     print(json.dumps(counts, indent=2))
 
 

@@ -71,6 +71,3 @@ UNWIND [
 MATCH (a:WWII:WartimeGovernment {name:row.a}), (b:WWII:WartimeGovernment {name:row.b})
 MERGE (a)-[r:DECLARED_WAR_ON {date:date(row.date)}]->(b)
 SET r.sign = -1, r.year = r.date.year, r.wiki_url = 'https://en.wikipedia.org/wiki/' + row.page;
-
-MATCH (n:WWII) RETURN labels(n) AS labels, count(*) AS nodes ORDER BY labels;
-MATCH (:WWII)-[r]->(:WWII) RETURN type(r) AS type, count(*) AS edges ORDER BY type;
