@@ -3,13 +3,13 @@ const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'
 const fmt=n=>Number(n).toLocaleString('vi-VN',{maximumFractionDigits:3});
 const kind={WartimePolitician:'Chính khách / ứng viên',WartimeParty:'Đảng phái',WartimeGovernment:'Chính phủ',WartimeEvent:'Sự kiện'};
 const rel={ATTENDED:'tham dự',SIGNED:'ký kết',LED_GOVERNMENT:'lãnh đạo chính phủ',LED_PARTY:'lãnh đạo đảng',ORDERED_INVASION_OF:'ra lệnh xâm lược',REPRESENTED:'đại diện',MILITARY_PACT:'hiệp ước quân sự',NON_AGGRESSION_PACT:'bất tương xâm',INVADED:'xâm lược',DECLARED_WAR_ON:'tuyên chiến',JOINT_DECLARATION:'tuyên bố chung',NOMINATES_CANDIDATE:'đề cử',ELECTORAL_RIVAL:'tranh cử cùng ghế',LEAVES_PARTY:'rời đảng',JOINS_PARTY_AFTER_SWITCH:'gia nhập đảng',DEMANDS_SURRENDER:'yêu cầu đầu hàng',DIRECTED_AID_TO:'viện trợ',CALLED_FOR_RESISTANCE_AGAINST:'kêu gọi kháng cự',EXPRESSED_SUPPORT_FOR:'bày tỏ ủng hộ'};
-let data,nodes,adj,selected,lastContext=[],lastPath=[],positions=new Map(),requestToken=0,modelBusy=false;
+let data,nodes,adj,selected,lastContext=[],lastPath=[],positions=new Map(),requestToken=0,modelBusy=false,qaEngine,qaRequest=null;
 function sourceLink(e){try{const u=new URL(e.wiki_url);if(u.hostname==='en.wikipedia.org'||u.hostname==='vi.wikipedia.org')return '<a href="'+safe(u.href)+'" target="_blank" rel="noreferrer">Wikipedia · '+safe(e.method)+'</a>'}catch{}return ''}
 function metric(label,value,note=''){return '<div class="metric"><label>'+safe(label)+'</label><strong>'+safe(value)+'</strong><span>'+safe(note)+'</span></div>'}
 function go(page){document.querySelectorAll('.page').forEach(p=>p.hidden=p.id!==page);document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page))}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>go(b.dataset.page));
 function select(id){
- selected=nodes.get(id);if(!selected)return;requestToken++;
+ selected=nodes.get(id);if(!selected)return;requestToken++;qaRequest=null;$('slm').disabled=true;
  $('results').innerHTML='';$('search').value='';$('answer').innerHTML='';$('slmanswer').textContent='';lastContext=[];lastPath=[];
  const n=selected, incident=adj.get(id)||[], degree=n.degree;
  $('entity').innerHTML='<div class="entitybar"><div class="monogram">'+safe(n.name.split(' ').map(x=>x[0]).slice(0,2).join(''))+'</div><div><h2>'+safe(n.name)+'</h2><small>'+safe(kind[n.kind])+' · '+safe(n.country||'Lớp ngoại giao')+'</small></div><span class="tag">Cộng đồng '+(n.community+1)+'</span></div>';
@@ -41,41 +41,38 @@ function draw(){
  $('graph').querySelectorAll('.node').forEach(g=>{g.onclick=()=>select(g.dataset.id);g.onkeydown=e=>{if(e.key==='Enter')select(g.dataset.id)}});
  const svg=$('graph').querySelector('svg'),view=svg.querySelector('.viewport');let scale=1;svg.onwheel=e=>{e.preventDefault();scale=Math.max(.5,Math.min(3,scale+(e.deltaY<0?.1:-.1)));view.setAttribute('transform','translate(340 215) scale('+scale+') translate(-340 -215)')};
 }
-function pathTo(target,max=4){
- const queue=[selected.id],visited=new Set(queue),previous=new Map();
- for(let i=0;i<queue.length;i++){
-  const id=queue[i];if(id===target)break;
-  let depth=0,c=id;while(previous.has(c)){depth++;c=previous.get(c).node}if(depth>=max)continue;
-  for(const e of adj.get(id)||[]){const v=e.source===id?e.target:e.source;if(!visited.has(v)){visited.add(v);previous.set(v,{node:id,edge:e});queue.push(v)}}
- }
- if(!visited.has(target))return null;
- const path=[];let c=target;while(c!==selected.id){let p=previous.get(c);path.unshift(p.edge);c=p.node}return path;
+function answerQuestion(){
+ if(!qaEngine){$('answer').textContent='Đang tải dữ liệu đồ thị, vui lòng thử lại sau vài giây.';return}
+ requestToken++;$('slmanswer').textContent='';
+ const result=qaEngine.answer($('question').value,selected.id,$('target').value);
+ lastContext=result.context||[];lastPath=result.path||[];qaRequest=result.kind==='path'?{start:result.start,target:result.target,question:$('question').value||'Giải thích mối liên hệ giữa hai thực thể'}:null;
+ $('slm').disabled=!qaRequest||modelBusy;
+ $('answer').innerHTML='<strong>'+safe(result.title)+'</strong><div class="qa-text">'+safe(result.text)+'</div>'+(lastContext.length?'<details class="qa-sources"><summary>Nguồn và bằng chứng ('+lastContext.length+')</summary>'+lastContext.map(e=>'<div class="step">['+e.citation+'] '+safe(e.source)+' · '+safe(rel[e.relation]||e.relation)+' · '+safe(e.target)+' · '+safe(e.year||'Chưa rõ năm')+'<br>'+sourceLink({wiki_url:e.url,method:'Bằng chứng'})+(e.evidence?'<p>'+safe(e.evidence)+'</p>':'')+'</div>').join('')+'</details>':'')+(result.choices?result.choices.map(n=>'<button class="secondary" data-entity="'+safe(n.id)+'">'+safe(n.name)+' · '+safe(n.country||kind[n.kind])+'</button>').join(''):'');
+ bindEntities();
 }
-$('ask').onclick=()=>{
- const target=$('target').value,path=pathTo(target);lastPath=path||[];lastContext=lastPath.map((e,i)=>({citation:i+1,source:nodes.get(e.source).name,target:nodes.get(e.target).name,relation:e.relation,year:e.year,sign:e.sign??null,url:e.wiki_url,evidence:e.evidence||null}));
- if(!path){$('answer').innerHTML='<p>Không tìm được đường đi trong 4 bước giữa hai thực thể ở bản dữ liệu này.</p>';return}
- if(!path.length){$('answer').textContent='Hai đầu mút là cùng một thực thể.';return}
- $('answer').innerHTML='<strong>Đường liên hệ '+path.length+' bước</strong><p>Truy xuất theo đường đi ngắn nhất trên đồ thị vô hướng. Mỗi bước dưới đây giữ chiều và loại của cạnh gốc.</p>'+lastContext.map(e=>'<div class="step">['+e.citation+'] '+safe(e.source)+' <b>'+safe(rel[e.relation])+'</b> '+safe(e.target)+' · '+safe(e.year)+'<br>'+sourceLink({wiki_url:e.url,method:'Bằng chứng'})+'</div>').join('')+'<p>Các bước tạo một đường liên hệ trong dữ liệu. Việc suy ra đồng minh hay đối thủ giữa hai đầu mút cần bằng chứng riêng.</p>';
-};
+$('ask').onclick=answerQuestion;
+$('question').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();answerQuestion()}};
+$('question').oninput=()=>{requestToken++;qaRequest=null;lastContext=[];$('slm').disabled=true};
+document.querySelectorAll('[data-question]').forEach(b=>b.onclick=()=>{$('question').value=b.dataset.question;answerQuestion()});
 async function localModel(route,body,out){
  if(modelBusy){out.textContent='Một yêu cầu mô hình đang chạy. Vui lòng chờ.';return}
  if(!['127.0.0.1','localhost'].includes(location.hostname)){out.textContent='Chức năng Qwen dùng bản cục bộ. Mở README trong gói mã nguồn và chạy server.py cùng mô hình đã tải.';return}
  const token=requestToken;modelBusy=true;$('slm').disabled=true;$('enrich').disabled=true;out.textContent='Đang gọi Qwen cục bộ. CPU có thể cần vài phút…';
  try{const r=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw Error(await r.text());const d=await r.json();if(token===requestToken){out.textContent=d.response||JSON.stringify(d,null,2);if(d.citation_ids_valid===false)out.textContent+='\nCần kiểm tra lại: câu trả lời chưa dẫn đúng mã nguồn được truy xuất.'}}
  catch(e){if(token===requestToken)out.textContent='Không gọi được mô hình. Kiểm tra llama.cpp hoặc Ollama theo README. '+String(e.message).slice(0,160)}
- finally{modelBusy=false;$('slm').disabled=false;$('enrich').disabled=false}
+ finally{modelBusy=false;$('slm').disabled=!qaRequest;$('enrich').disabled=false}
 }
-$('slm').onclick=()=>{if(!lastContext.length){$('slmanswer').textContent='Hãy chạy phân tích mối liên hệ trước để lấy bằng chứng.';return}localModel('/api/answer',{start:selected.id,target:$('target').value,question:$('question').value||'Giải thích mối liên hệ giữa '+selected.name+' và '+nodes.get($('target').value).name,context:lastContext},$('slmanswer'))};
+$('slm').onclick=()=>{if(!qaRequest){$('slmanswer').textContent='Hãy hỏi về đường liên hệ giữa hai thực thể trước.';return}localModel('/api/answer',qaRequest,$('slmanswer'))};
 $('enrich').onclick=()=>localModel('/api/enrich',{text:$('enrichtext').value,url:$('sourceurl').value},$('enrichout'));
 $('export').onclick=()=>{const blob=new Blob([JSON.stringify({node:selected,relations:adj.get(selected.id),retrieved_paths:lastContext},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='entity-profile.json';a.click();URL.revokeObjectURL(a.href)};
 $('search').oninput=()=>{const term=$('search').value.trim().toLocaleLowerCase();$('results').innerHTML=term?data.nodes.filter(n=>n.name.toLocaleLowerCase().includes(term)).slice(0,15).map(n=>'<button data-entity="'+n.id+'">'+safe(n.name)+'<small>'+safe(kind[n.kind])+'</small></button>').join(''):'';bindEntities()};
-$('target').onchange=()=>{requestToken++;lastContext=[];lastPath=[];$('answer').textContent='Hãy chạy phân tích mối liên hệ cho thực thể mới.';$('slmanswer').textContent=''};
+$('target').onchange=()=>{requestToken++;qaRequest=null;$('slm').disabled=true;lastContext=[];lastPath=[];$('answer').textContent='Hãy chạy phân tích mối liên hệ cho thực thể mới.';$('slmanswer').textContent=''};
 $('hops').onchange=draw;$('sign').onchange=draw;
 function ranking(){const mode=$('rankmode').value;const ranked=data.nodes.slice().sort((a,b)=>b[mode]-a[mode]).slice(0,20);$('ranking').innerHTML=ranked.map((n,i)=>'<div class="rankrow"><span>'+String(i+1).padStart(2,'0')+'</span><button data-entity="'+n.id+'">'+safe(n.name)+'<div class="bar" style="width:'+Math.max(2,n[mode]/ranked[0][mode]*100)+'%"></div></button><small>'+n[mode].toFixed(5)+'</small></div>').join('');bindEntities()}
 $('rankmode').onchange=ranking;
 async function init(){
  try{
- const r=await fetch('graph.json');if(!r.ok)throw Error('Không đọc được graph.json');data=await r.json();nodes=new Map(data.nodes.map(n=>[n.id,n]));adj=new Map(data.nodes.map(n=>[n.id,[]]));data.edges.forEach(e=>{adj.get(e.source).push(e);adj.get(e.target).push(e)});
+ const r=await fetch('graph.json');if(!r.ok)throw Error('Không đọc được graph.json');data=await r.json();qaEngine=new GraphQA(data);$('ask').disabled=false;nodes=new Map(data.nodes.map(n=>[n.id,n]));adj=new Map(data.nodes.map(n=>[n.id,[]]));data.edges.forEach(e=>{adj.get(e.source).push(e);adj.get(e.target).push(e)});
  $('loadstatus').textContent=fmt(data.nodes.length)+' nút · '+fmt(data.edges.length)+' quan hệ · Bản xuất Neo4j';
  const s=data.stats;$('globalmetrics').innerHTML=metric('Thành phần liên thông',s.components,'Toàn mạng')+metric('Khoảng cách TB',fmt(s.average_shortest_path_lcc),'Thành phần lớn nhất')+metric('Cộng đồng Louvain',s.communities,'Seed 1945')+metric('Modularity',fmt(s.modularity),'Đồ thị đơn vô hướng');
  $('smallworld').innerHTML='<p>Mạng có '+s.components+' thành phần rời nhau. Khoảng cách trung bình toàn mạng khi tính cả cặp không thể đến nhau không xác định. Chỉ '+(s.reachable_fraction*100).toFixed(1)+'% cặp nút có đường đi. Trung bình trên các cặp đến được là '+fmt(s.reachable_pair_mean)+'.</p><table><thead><tr><th>Chỉ số</th><th>Mạng quan sát</th><th>Đối chứng G(n,m), trung bình 3 lần</th></tr></thead><tbody><tr><td>Khoảng cách trung bình</td><td>'+fmt(s.average_shortest_path_lcc)+'</td><td>'+fmt(s.baselines.reduce((a,b)=>a+b.path_length,0)/3)+'</td></tr><tr><td>Hệ số phân cụm</td><td>'+fmt(s.clustering_lcc)+'</td><td>'+fmt(s.baselines.reduce((a,b)=>a+b.clustering,0)/3)+'</td></tr></tbody></table><p>Đo trên thành phần lớn nhất ('+fmt(s.largest_component)+' nút), đường kính '+s.diameter_lcc+'. Chỉ số σ so với G(n,m) = '+fmt(s.sigma_er)+'. Đối chứng giữ số nút và cạnh, chưa giữ phân phối bậc. Kết quả này là kiểm tra định lượng bước đầu cho giả thuyết thế giới nhỏ.</p><p>PageRank và Louvain dùng đồ thị đơn vô hướng, không trọng số. PageRank cạnh dương được tính riêng. K-core cho biết mức lõi cấu trúc của một nút.</p>';
@@ -84,6 +81,7 @@ async function init(){
  renderDegreeComparison(s);renderModelRun();$('search').labels[0].textContent='Tìm trong '+fmt(data.nodes.length)+' thực thể';select((data.nodes.find(n=>n.name==='Adolf Hitler')||data.nodes[0]).id);ranking();bindEntities();
  }catch(e){$('loadstatus').textContent='Lỗi tải dữ liệu';$('entity').textContent=e.message}
 }
+const localRuntime=['127.0.0.1','localhost'].includes(location.hostname);$('slm').hidden=!localRuntime;$('slm').disabled=true;$('qa-mode').textContent=localRuntime?'Trả lời từ đồ thị trên trình duyệt. Qwen là tùy chọn diễn giải khi mô hình cục bộ đang chạy.':'Trả lời trực tiếp từ snapshot đồ thị trên web, kèm nguồn. Phần diễn giải Qwen dùng ở bản cục bộ.';if(!localRuntime){$('enrich').disabled=true;$('enrich').textContent='Trích xuất Qwen cần bản cục bộ'}
 init();
 
 function renderDegreeComparison(s){

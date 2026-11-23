@@ -81,6 +81,19 @@ Kết quả batch lưu raw của mô hình, đề xuất qua kiểm tra, đề x
 
 ## GraphRAG và tính kiểm chứng
 
+### Hỏi đáp ngay trên web
+
+Nút **Trả lời từ đồ thị** xử lý trực tiếp snapshot trong trình duyệt, hoạt động trên cả Sites và localhost. Có thể nhập câu hỏi có dấu hoặc không dấu, nhấn Enter hoặc chọn câu hỏi mẫu. Shift+Enter để xuống dòng.
+
+- “Hitler tuyên chiến với ai năm 1941?” lọc đúng loại cạnh, chiều và năm.
+- “Hitler và Stalin có mối liên hệ gì?” truy xuất tối đa bốn bước, giữ chiều gốc và nguồn.
+- “PageRank của Hitler là bao nhiêu?”, “Hitler thuộc cộng đồng nào?” đọc chỉ số đã tính.
+- “Dòng thời gian của Hitler năm 1941” lọc bằng chứng theo năm.
+
+Đây là hỏi đáp theo các mẫu truy vấn có kiểm soát trên graph, không phải mô hình sinh ngôn ngữ trên cloud. Các câu chưa hỗ trợ, tên trùng và đường đi thiếu bằng chứng được thông báo rõ. Khi để trống câu hỏi, chương trình dùng node hồ sơ và thực thể đích đã chọn. Các tên được nêu trong câu hỏi được ưu tiên hơn lựa chọn mặc định.
+
+Nút **Diễn giải với Qwen** chỉ hiện trên localhost sau khi có kết quả đường đi. Bản web không hiển thị nút gọi dịch vụ cục bộ không thể truy cập. Kiểm thử hỏi đáp: `node --test test_qa.cjs` (Node.js 18+).
+
 Client truy xuất đường ngắn nhất tối đa 4 cạnh. Server tự truy xuất lại bằng ID trong snapshot, không tin context client gửi. Cạnh giữ chiều gốc ngay cả khi BFS đi ngược. Qwen nhận bằng chứng truy xuất; server kiểm tra số citation có thuộc context. Kiểm tra số citation không bảo đảm đúng ngữ nghĩa. Khi không có đường đi, server từ chối trả lời dựa trên graph.
 
 Đây là GraphRAG theo đường đi trên đồ thị tri thức cục bộ, không phải toàn bộ pipeline Microsoft GraphRAG. Câu hỏi gắn với hai thực thể được chọn; chưa tự xác định endpoint từ câu hỏi tự do.
