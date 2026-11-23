@@ -1,0 +1,6 @@
+vendor/
+__pycache__/
+*.log
+runtime/
+.logs/
+.runtime-location

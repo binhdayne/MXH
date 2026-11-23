@@ -1,0 +1,15 @@
+{
+  "model": "Qwen2.5-3B-Instruct",
+  "parameters_billion": 3.09,
+  "quantization": "Q4_K_M",
+  "backend": "llama.cpp b12651 CPU, 4 threads",
+  "weights_sha256": "626b4a6678b86442240e33df819e00132d3ba7dddfe1cdc4fbb18e0a9615c62d",
+  "development_paragraphs": 1,
+  "elapsed_seconds": 222.31134223937988,
+  "raw_relations": 4,
+  "validated_after_domain_range_guard": 0,
+  "rejected_after_domain_range_guard": 4,
+  "held_out_accuracy": null,
+  "independent_human_annotation_complete": false,
+  "notes": "Countries were mistyped as Event; invasion was mislabeled MILITARY_PACT. Guard updated on development example, not a held-out score."
+}

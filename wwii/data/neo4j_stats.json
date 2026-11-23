@@ -1,6 +1,6 @@
 {
   "nodes": 2750,
-  "edges": 6640,
+  "edges": 6642,
   "node_types": {
     "WartimeEvent": 8,
     "WartimePolitician": 2647,
@@ -12,9 +12,10 @@
     "REPRESENTED": 8,
     "ATTENDED": 21,
     "SIGNED": 8,
+    "DECLARED_WAR_ON": 4,
+    "ORDERED_INVASION_OF": 1,
     "DEMANDS_SURRENDER": 3,
     "DIRECTED_AID_TO": 2,
-    "DECLARED_WAR_ON": 3,
     "NON_AGGRESSION_PACT": 2,
     "INVADED": 1,
     "MILITARY_PACT": 3,
@@ -28,20 +29,21 @@
   "methods": {
     "nlp": 10,
     "manual": 46,
+    "reviewed_text": 2,
     "table": 6584
   },
   "signs": {
     "1": 3163,
     "neutral": 37,
-    "-1": 3440
+    "-1": 3442
   },
   "categories": {
     "support": 3162,
     "context": 37,
-    "opposition": 3439,
+    "opposition": 3441,
     "switch": 2
   },
-  "signed_types": 13,
+  "signed_types": 14,
   "components": 14,
   "largest_components": [
     1966,

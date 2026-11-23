@@ -1,0 +1,74 @@
+{
+  "entities": [
+    {
+      "name": "Hitler",
+      "type": "Person"
+    },
+    {
+      "name": "Germany",
+      "type": "Government"
+    },
+    {
+      "name": "Poland",
+      "type": "Event"
+    },
+    {
+      "name": "United States",
+      "type": "Event"
+    },
+    {
+      "name": "Soviet Union",
+      "type": "Event"
+    }
+  ],
+  "validated_proposals": [],
+  "rejected": [
+    {
+      "proposal": {
+        "source": "Germany",
+        "target": "Poland",
+        "type": "INVADED",
+        "sign": -1,
+        "year": 1939,
+        "evidence": "German invasion of Poland"
+      },
+      "reason": "domain_range_mismatch"
+    },
+    {
+      "proposal": {
+        "source": "Germany",
+        "target": "United States",
+        "type": "DECLARED_WAR_ON",
+        "sign": -1,
+        "year": 1941,
+        "evidence": "declared war on the United States"
+      },
+      "reason": "domain_range_mismatch"
+    },
+    {
+      "proposal": {
+        "source": "Germany",
+        "target": "Soviet Union",
+        "type": "MILITARY_PACT",
+        "sign": 1,
+        "year": 1941,
+        "evidence": "ordering an invasion of the Soviet Union"
+      },
+      "reason": "domain_range_mismatch"
+    },
+    {
+      "proposal": {
+        "source": "Hitler",
+        "target": "Eva Braun",
+        "type": "JOINED_PARTY_AFTER_SWITCH",
+        "sign": 1,
+        "year": 1945,
+        "evidence": "Hitler married Eva Braun"
+      },
+      "reason": "unknown_relation"
+    }
+  ],
+  "uncertain": [],
+  "review_required": true,
+  "note": "Validation checks structure and quoted spans. Human review must establish semantic correctness."
+}

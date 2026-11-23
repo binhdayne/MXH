@@ -26,7 +26,7 @@ def query(url, statements, authorization=None):
         headers["Authorization"] = authorization
     request = Request(url, data=json.dumps({"statements": statements}).encode(), headers=headers)
     try:
-        with urlopen(request, timeout=90) as response:
+        with urlopen(request, timeout=300) as response:
             result = json.load(response)
     except HTTPError as error:
         raise RuntimeError(f"Neo4j HTTP {error.code}: {error.read().decode()[:1000]}") from error
@@ -182,7 +182,11 @@ def main():
     edges = group_edges(read_rows(args.data / "edges.csv"), node_ids)
     endpoint = f"{args.http.rstrip('/')}/db/{args.database}/tx/commit"
     authorization = authorization_header()
+    query(endpoint, [statement("CREATE INDEX wwii_entity_id IF NOT EXISTS FOR (n:WWII) ON (n.id)"), statement("CREATE INDEX wwii_entity_name IF NOT EXISTS FOR (n:WWII) ON (n.name)")], authorization)
+    query(endpoint, [statement("CALL db.awaitIndexes(120)")], authorization)
     statements = import_statements(nodes, edges)
+    enrichment = Path(__file__).with_name("entity_atlas_enrichment.cypher").read_text(encoding="utf8")
+    statements.extend(statement(c.strip()) for c in enrichment.split(";") if c.strip())
     statements.extend([
         statement("MATCH (n:WWII) RETURN elementId(n), head([l IN labels(n) WHERE l <> 'WWII'])"),
         statement("MATCH (a:WWII)-[r]->(b:WWII) RETURN elementId(a), elementId(b), type(r), r.sign, r.method, r.category"),
@@ -191,7 +195,7 @@ def main():
     vertices = [item["row"] for item in results[-2]["data"]]
     links = [item["row"] for item in results[-1]["data"]]
     expected = sum(map(len, edges.values()))
-    observed = sum(edge[4] != "manual" for edge in links)
+    observed = sum(edge[4] in {"table", "nlp"} for edge in links)
     if expected != observed:
         raise RuntimeError(f"Expected {expected} generated edges, found {observed}.")
     stats = summarize(vertices, links)

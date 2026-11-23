@@ -1,0 +1,34 @@
+[
+  {
+    "key": "atlas-hitler-DECLARED_WAR_ON",
+    "source_id": "4:dece873f-55fb-45fc-b7d4-c9101dca2806:3353",
+    "target_id": "4:dece873f-55fb-45fc-b7d4-c9101dca2806:3355",
+    "relation": "DECLARED_WAR_ON",
+    "sign": -1,
+    "year": 1941,
+    "evidence": "After ordering an invasion of the Soviet Union in June 1941, he declared war on the United States in December of the same year.",
+    "wiki_url": "https://en.wikipedia.org/wiki/Special:PermanentLink/1386057491",
+    "method": "reviewed_text",
+    "review_status": "corrected_after_assistant_source_check",
+    "reviewer": "Codex source check; independent student review pending",
+    "approved": true,
+    "human_review_pending": true,
+    "model_raw": "evaluation/qwen_development.jsonl"
+  },
+  {
+    "key": "atlas-hitler-ORDERED_INVASION_OF",
+    "source_id": "4:dece873f-55fb-45fc-b7d4-c9101dca2806:3353",
+    "target_id": "4:dece873f-55fb-45fc-b7d4-c9101dca2806:3356",
+    "relation": "ORDERED_INVASION_OF",
+    "sign": -1,
+    "year": 1941,
+    "evidence": "After ordering an invasion of the Soviet Union in June 1941, he declared war on the United States in December of the same year.",
+    "wiki_url": "https://en.wikipedia.org/wiki/Special:PermanentLink/1386057491",
+    "method": "reviewed_text",
+    "review_status": "corrected_after_assistant_source_check",
+    "reviewer": "Codex source check; independent student review pending",
+    "approved": true,
+    "human_review_pending": true,
+    "model_raw": "evaluation/qwen_development.jsonl"
+  }
+]

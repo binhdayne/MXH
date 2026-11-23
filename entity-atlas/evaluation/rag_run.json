@@ -1,0 +1,44 @@
+{
+  "model": "qwen2.5:3b",
+  "response": "Bản diễn giải của mô hình chưa qua bước kiểm tra. Bằng chứng truy xuất:\n[1] Adolf Hitler — ORDERED_INVASION_OF → Soviet Union (1941).\n[2] Joseph Stalin — REPRESENTED → Soviet Union (1943).\nĐường đi thể hiện liên hệ trong dữ liệu; chưa chứng minh liên minh hoặc quan hệ nhân quả giữa hai đầu mút.",
+  "context": [
+    {
+      "citation": 1,
+      "source": "Adolf Hitler",
+      "target": "Soviet Union",
+      "relation": "ORDERED_INVASION_OF",
+      "year": 1941,
+      "sign": -1,
+      "url": "https://en.wikipedia.org/wiki/Special:PermanentLink/1386057491",
+      "evidence": "After ordering an invasion of the Soviet Union in June 1941, he declared war on the United States in December of the same year.",
+      "event": null,
+      "edge_id": "5:dece873f-55fb-45fc-b7d4-c9101dca2806:17021"
+    },
+    {
+      "citation": 2,
+      "source": "Joseph Stalin",
+      "target": "Soviet Union",
+      "relation": "REPRESENTED",
+      "year": 1943,
+      "sign": null,
+      "url": "https://en.wikipedia.org/wiki/Tehran_Conference",
+      "evidence": null,
+      "event": "Tehran Conference",
+      "edge_id": "5:dece873f-55fb-45fc-b7d4-c9101dca2806:10411"
+    }
+  ],
+  "citation_ids_valid": true,
+  "citation_coverage": 1.0,
+  "semantic_review_required": true,
+  "question": "Hitler và Stalin có mối liên hệ gì qua đường đi được cung cấp? Giữ đúng năm và nêu giới hạn suy luận.",
+  "elapsed_seconds": 95.34731864929199,
+  "independent_human_score": null,
+  "raw_generation": "Hitler đã ra lệnh cho một cuộc xâm lược Liên Xô vào tháng 6 năm 1941, dẫn đến việc tuyên战美国于同年12月。[1] Stalin không có mối liên hệ trực tiếp qua đường đi được cung cấp. [2]",
+  "verification_flags": [
+    "unexpected_script_for_vietnamese_output",
+    "causal_language_without_causal_relation"
+  ],
+  "generation_accepted": false,
+  "response_origin": "retrieval_fallback",
+  "guard_tuned_on_development_case": true
+}

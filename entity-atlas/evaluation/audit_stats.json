@@ -1,0 +1,12 @@
+{
+  "NOMINATES_CANDIDATE": {
+    "sample": 100,
+    "matched": 100,
+    "wilson_lower_95": 0.9630065017930143
+  },
+  "ELECTORAL_RIVAL": {
+    "sample": 100,
+    "matched": 100,
+    "wilson_lower_95": 0.9630065017930143
+  }
+}

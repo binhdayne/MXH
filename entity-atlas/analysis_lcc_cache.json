@@ -1,0 +1,48 @@
+{
+  "lcc_signature": "5852b934516e77506eefa1260c45c3b9f6f8772963bf61d822d24a8f970566ed",
+  "networkx": "3.4.2",
+  "metric_version": 2,
+  "baselines": [
+    {
+      "seed": 41,
+      "nodes": 1925,
+      "clustering": 0.002748711605854463,
+      "path_length": 5.697954477954478
+    },
+    {
+      "seed": 42,
+      "nodes": 1923,
+      "clustering": 0.0005988118312611291,
+      "path_length": 5.709917678705067
+    },
+    {
+      "seed": 43,
+      "nodes": 1914,
+      "clustering": 0.0014259628679691376,
+      "path_length": 5.644866204449455
+    }
+  ],
+  "degree_baselines": [
+    {
+      "seed": 1941,
+      "nodes": 1966,
+      "successful_swaps": 13338,
+      "clustering": 0.20730833489374753,
+      "path_length": 3.070537043220758
+    },
+    {
+      "seed": 1942,
+      "nodes": 1966,
+      "successful_swaps": 13023,
+      "clustering": 0.2058356416645337,
+      "path_length": 3.0921161009424853
+    },
+    {
+      "seed": 1943,
+      "nodes": 1966,
+      "successful_swaps": 13108,
+      "clustering": 0.19076143489601083,
+      "path_length": 3.0688658854470012
+    }
+  ]
+}
