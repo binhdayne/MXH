@@ -1,4 +1,4 @@
-vendor/
+/vendor/
 __pycache__/
 *.log
 runtime/

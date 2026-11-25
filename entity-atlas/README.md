@@ -12,7 +12,25 @@ Cần Python 3.10+. Giao diện và dữ liệu đã tính sẵn dùng thư vi�
 python server.py
 ```
 
-Mở http://127.0.0.1:8765. Tìm tên hoặc bấm một nút để xem hồ sơ. Lọc 1–3 bước và dấu quan hệ. Đồ thị lân cận giới hạn 90 nút; số liệu và tệp JSON lấy trên dữ liệu đầy đủ. Các số liệu chính xác nằm trong `analysis.json`.
+Mở http://127.0.0.1:8765. Tìm tên hoặc bấm một nút để xem hồ sơ. Lọc 1–3 bước và dấu quan hệ; chọn giới hạn 90, 180 hoặc 350 nút cho mạng lân cận. Các số liệu chính xác nằm trong `analysis.json`.
+
+## Khám phá đồ thị
+
+- **Mạng quan hệ:** bố trí bằng lực đẩy và chống va chạm giữa các nút. Nhãn tự chọn vị trí đủ chỗ; rê chuột lên nút để đọc tên đầy đủ. Rê chuột lên đường nối để xem loại quan hệ (tiếng Việt và mã cạnh), hai đầu mút, chiều, năm và dấu. Nếu nhiều bản ghi cùng nối hai nút, tooltip liệt kê tối đa ba bản ghi và thông báo số còn lại. Kéo một nút để tách vị trí, kéo nền để di chuyển, cuộn chuột hoặc dùng nút +/− để phóng to, thu nhỏ.
+- **Toàn cảnh mạng:** mặc định hiển thị đủ 2.750 nút và 6.643 cạnh, gồm cả nút cô lập. Có thể lọc loại thực thể, cộng đồng, loại quan hệ, dấu và năm; số nút/cạnh đang hiển thị luôn được cập nhật. Khi lọc quan hệ hoặc năm, chỉ giữ các nút tham gia cạnh phù hợp.
+- Tìm tên trong toàn cảnh để đưa nút vào giữa màn hình. Nếu nút nằm ngoài bộ lọc, ứng dụng xóa bộ lọc để hiển thị nút đó. Bấm nút để xem chỉ số và láng giềng; bấm **Mở hồ sơ** hoặc bấm đúp nút để mở hồ sơ chi tiết. Bấm cạnh để đọc quan hệ và nguồn.
+- **Vừa khung** đưa mạng vào khung nhìn; **Bố trí lại** khôi phục bố cục; **Mở rộng** mở khung lớn, Escape để thu gọn. Khi canvas được chọn, dùng +/−, các phím mũi tên và phím 0 để điều khiển.
+
+Giao diện dùng Canvas và [D3 7.9.0](https://d3js.org/d3-force) được lưu trong `dist/vendor/`, không phụ thuộc CDN khi chạy. Bố cục toàn mạng được tính sẵn theo các cộng đồng để tránh chạy mô phỏng lớn khi mở trang; vị trí và khoảng cách trên hình chỉ phục vụ hiển thị, không thay đổi cạnh hay các chỉ số phân tích.
+
+Sau khi xuất lại `dist/graph.json`, cần Node.js 18+ để tạo lại bố cục khớp snapshot và chạy kiểm thử:
+
+```powershell
+node build_layout.cjs
+node --test test_network.cjs test_qa.cjs
+```
+
+`dist/layout.json` chứa tọa độ, ID và SHA-256 của graph gốc. Kiểm thử kiểm tra toàn bộ nút/cạnh, tính nhất quán của bộ lọc, bố cục, nhãn và các câu hỏi GraphRAG hiện có.
 
 ## Triển khai theo đề cuối kỳ
 
@@ -90,13 +108,18 @@ Nút **Trả lời từ đồ thị** xử lý trực tiếp snapshot trong trì
 - “PageRank của Hitler là bao nhiêu?”, “Hitler thuộc cộng đồng nào?” đọc chỉ số đã tính.
 - “Dòng thời gian của Hitler năm 1941” lọc bằng chứng theo năm.
 
-Đây là hỏi đáp theo các mẫu truy vấn có kiểm soát trên graph, không phải mô hình sinh ngôn ngữ trên cloud. Các câu chưa hỗ trợ, tên trùng và đường đi thiếu bằng chứng được thông báo rõ. Khi để trống câu hỏi, chương trình dùng node hồ sơ và thực thể đích đã chọn. Các tên được nêu trong câu hỏi được ưu tiên hơn lựa chọn mặc định.
+Có thể hỏi ngắn như “Stalin với Soviet”, “Germany với Soviet năm 1941” hoặc “Quan hệ của Hiter là Germany”. Trong phạm vi corpus Thế chiến II, Germany được liên kết với Nazi Germany; Soviet/USSR với Soviet Union; Hiter/Hitller với Adolf Hitler. Chương trình chỉ dùng những biến thể tên đã khai báo, không tự đoán mọi lỗi chính tả.
+
+Kết quả phân biệt cạnh trực tiếp với đường liên hệ gián tiếp. Khi có nhiều bản ghi trực tiếp giữa cùng cặp nút, hiển thị các loại quan hệ và năm khác nhau (tối đa 20). Đã bổ sung cạnh Hitler → LED_GOVERNMENT → Nazi Germany từ Wikipedia (infobox nhiệm kỳ Thủ tướng 1933–1945), lưu bằng chứng trong evaluation/leadership_additions.json. Cạnh có start_year/end_year và ngày bắt đầu/kết thúc; year=1939 chỉ là mốc đầu phạm vi nghiên cứu. Bộ lọc năm xét cả nhiệm kỳ. Nguồn được trợ lý kiểm tra; vẫn chờ hai sinh viên kiểm chứng độc lập.
+
+Đây là hỏi đáp theo các mẫu truy vấn có kiểm soát trên graph, không phải mô hình sinh ngôn ngữ trên cloud. Các câu chưa hỗ trợ, tên trùng và đường đi thiếu bằng chứng được thông báo rõ. Nhập tên hai thực thể trực tiếp trong câu hỏi, ví dụ “Hitler và Stalin có mối liên hệ gì?”. Có thể hỏi “Quan hệ với Stalin” để dùng thực thể hồ sơ đang mở làm đầu còn lại. Câu hỏi trống sẽ yêu cầu nhập nội dung.
+
 
 Nút **Diễn giải với Qwen** chỉ hiện trên localhost sau khi có kết quả đường đi. Bản web không hiển thị nút gọi dịch vụ cục bộ không thể truy cập. Kiểm thử hỏi đáp: `node --test test_qa.cjs` (Node.js 18+).
 
 Client truy xuất đường ngắn nhất tối đa 4 cạnh. Server tự truy xuất lại bằng ID trong snapshot, không tin context client gửi. Cạnh giữ chiều gốc ngay cả khi BFS đi ngược. Qwen nhận bằng chứng truy xuất; server kiểm tra số citation có thuộc context. Kiểm tra số citation không bảo đảm đúng ngữ nghĩa. Khi không có đường đi, server từ chối trả lời dựa trên graph.
 
-Đây là GraphRAG theo đường đi trên đồ thị tri thức cục bộ, không phải toàn bộ pipeline Microsoft GraphRAG. Câu hỏi gắn với hai thực thể được chọn; chưa tự xác định endpoint từ câu hỏi tự do.
+Đây là GraphRAG theo đường đi trên đồ thị tri thức cục bộ, không phải toàn bộ pipeline Microsoft GraphRAG. Hai đầu của đường liên hệ được xác định từ các tên nhận diện trong câu hỏi.
 
 ## Đánh giá trung thực
 

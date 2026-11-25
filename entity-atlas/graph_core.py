@@ -58,6 +58,7 @@ class GraphStore:
   if not path:raise ValueError('Hãy chọn hai thực thể khác nhau.')
   return [dict(citation=i+1,source=self.nodes[e['source']]['name'],
     target=self.nodes[e['target']]['name'],relation=e['relation'],year=e.get('year'),
+    start_year=e.get('start_year'),end_year=e.get('end_year'),start_date=e.get('start_date'),end_date=e.get('end_date'),
     sign=e.get('sign'),url=e.get('wiki_url'),evidence=e.get('evidence'),event=e.get('event'),edge_id=e['id'])
     for i,e in enumerate(path)]
 
@@ -99,6 +100,8 @@ def check_generation(content,context):
 
 def retrieval_fallback(context):
  lines=['Bản diễn giải của mô hình chưa qua bước kiểm tra. Bằng chứng truy xuất:']
- for e in context:lines.append(f"[{e['citation']}] {e['source']} — {e['relation']} → {e['target']} ({e.get('year')}).")
+ for e in context:
+  period=f"{e['start_year']}–{e['end_year']}" if e.get('start_year') is not None else e.get('year')
+  lines.append(f"[{e['citation']}] {e['source']} — {e['relation']} → {e['target']} ({period}).")
  lines.append('Đường đi thể hiện liên hệ trong dữ liệu; chưa chứng minh liên minh hoặc quan hệ nhân quả giữa hai đầu mút.')
  return '\n'.join(lines)

@@ -1,0 +1,26 @@
+[
+  {
+    "key": "atlas-hitler-led-nazi-germany-1933-1945",
+    "source_id": "4:dece873f-55fb-45fc-b7d4-c9101dca2806:3353",
+    "target_id": "4:dece873f-55fb-45fc-b7d4-c9101dca2806:3358",
+    "relation": "LED_GOVERNMENT",
+    "sign": null,
+    "year": 1939,
+    "start_year": 1933,
+    "end_year": 1945,
+    "start_date": "1933-01-30",
+    "end_date": "1945-04-30",
+    "year_semantics": "1939 is the first study-scope year; start_year/end_year store the tenure, not a single event date.",
+    "evidence": "becoming the chancellor of Germany in 1933",
+    "wiki_url": "https://en.wikipedia.org/wiki/Adolf_Hitler",
+    "wiki_revision": 1386057491,
+    "section": "Lead; infobox",
+    "locator": "Infobox: Chancellor of Germany > In office",
+    "method": "source_checked_infobox",
+    "approved": true,
+    "reviewer": "Codex (AI source verification)",
+    "review_status": "assistant_source_checked",
+    "human_review_pending": true,
+    "source_checked_at": "2026-11-24"
+  }
+]
